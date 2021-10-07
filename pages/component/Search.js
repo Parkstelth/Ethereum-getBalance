@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-function Search() {
+function Search({onSearch}) {
   const [textDestination, setTextDestination] = useState('')
 
   const handleChange = (e) => {
-    setTextDestination(e.target.value.toUpperCase())
+    setTextDestination(e.target.value.toUpperCase()) //검색된 도착지
   }
 
   const handleKeyPress = (e) => {
@@ -16,8 +16,10 @@ function Search() {
   const handleSearchClick = () => {
     console.log('검색 버튼을 누르거나, 엔터를 치면 search 함수가 실행됩니다')
 
-    // TODO:
+    onSearch({departure:'ICN',destination:textDestination})
   }
+
+
 
   return <fieldset>
     <legend>공항 코드를 입력하고, 검색하세요</legend>

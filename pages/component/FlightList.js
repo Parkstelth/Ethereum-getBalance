@@ -1,6 +1,7 @@
 import Flight from './Flight'
 
 function FlightList({ list = [] }) {
+
   if (list.length === 0) {
     return <div className="merge-col">목록이 없습니다</div>
   }

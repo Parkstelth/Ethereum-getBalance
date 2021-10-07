@@ -9,6 +9,7 @@ import Debug from './component/Debug'
 import json from '../resource/flightList'
 
 export default function Main() {
+  const [isLoading, setIsLoading] = useState(false)
   const [condition, setCondition] = useState({
     departure: 'ICN'
   })
@@ -18,20 +19,21 @@ export default function Main() {
     if (condition.departure !== departure || condition.destination !== destination) {
       console.log('condition 상태를 변경시킵니다')
 
-      // TODO:
+      setCondition({departure:departure,destination:destination})
     }
   }
 
-  const filterByCondition = (flight) => {
-    let pass = true;
-    if (condition.departure) {
-      pass = pass && flight.departure === condition.departure
+  useEffect(async()=>{
+  
+    if(condition.destination!==undefined){
+      setIsLoading(true)
+    let a = await getFlight(condition,setIsLoading)
+      setFlightList(a)
+      setIsLoading(false)
+      
     }
-    if (condition.destination) {
-      pass = pass && flight.destination === condition.destination
-    }
-    return pass;
-  }
+  },[condition])
+  
 
   global.search = search // 실행에는 전혀 지장이 없지만, 테스트를 위해 필요한 코드입니다. 이 코드는 지우지 마세요!
 
@@ -46,7 +48,7 @@ export default function Main() {
         <h1>
           여행가고 싶을 땐, States Airline
         </h1>
-        <Search />
+        <Search onSearch={search}/>
         <div className="table">
           <div className="row-header">
             <div className="col">출발</div>
@@ -55,7 +57,7 @@ export default function Main() {
             <div className="col">도착 시각</div>
             <div className="col"></div>
           </div>
-          <FlightList list={flightList.filter(filterByCondition)} />
+          {isLoading ? <LoadingIndicator /> : <FlightList list={flightList} />}
         </div>
 
         <div className="debug-area">
