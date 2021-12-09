@@ -1,36 +1,45 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { getFlight } from '../api/FlightDataApi'
-import FlightList from './component/FlightList'
+import Accountinfo from './component/Accountinfo'
 import LoadingIndicator from './component/LoadingIndicator'
 import Search from './component/Search'
 import Debug from './component/Debug'
-
+import axios from 'axios'
 import json from '../resource/flightList'
+import Accountmenu from './component/Accoutmenu'
+
+const Web3 = require('web3')
+const rpcURL = "https://ropsten.infura.io/v3/6f1d81dc47a74fb490115e38f779483f"
+const web3 = new Web3(rpcURL)
+
 
 export default function Main() {
   const [isLoading, setIsLoading] = useState(false)
   const [condition, setCondition] = useState({
-    departure: 'ICN'
+    type: 'account'
   })
-  const [flightList, setFlightList] = useState(json)
+  const [accountvalue, setAccoutvalue] = useState(0)
 
-  const search = ({ departure, destination }) => {
-    if (condition.departure !== departure || condition.destination !== destination) {
-      console.log('condition 상태를 변경시킵니다')
+  const search = ({ type, address }) => {
 
-      setCondition({departure:departure,destination:destination})
-    }
+      setCondition({type:type,address:address})
+    
   }
+
 
   useEffect(async()=>{
   
-    if(condition.destination!==undefined){
+    if(condition.address){
       setIsLoading(true)
-    let a = await getFlight(condition,setIsLoading)
-      setFlightList(a)
-      setIsLoading(false)
       
+       let a = await axios.get(`https://api-ropsten.etherscan.io//api?module=account&action=balance&address=${condition.address}&tag=latest&apikey=1EMM8FN84K2627TEGBD1GJNH7G6MZTYW3Q`)
+
+     let value = a.data.result
+     let nvalue = web3.utils.fromWei(value, 'ether')
+   
+     setAccoutvalue(nvalue)
+      setIsLoading(false)
     }
   },[condition])
   
@@ -46,23 +55,19 @@ export default function Main() {
 
       <main>
         <h1>
-          여행가고 싶을 땐, States Airline
+          ETHEREUM ROPSTEN 계좌 조회
         </h1>
         <Search onSearch={search}/>
         <div className="table">
           <div className="row-header">
-            <div className="col">출발</div>
-            <div className="col">도착</div>
-            <div className="col">출발 시각</div>
-            <div className="col">도착 시각</div>
-            <div className="col"></div>
+            <Accountmenu />
           </div>
-          {isLoading ? <LoadingIndicator /> : <FlightList list={flightList} />}
+         <Accountinfo account={condition} value ={accountvalue} />
         </div>
 
-        <div className="debug-area">
+        {/* <div className="debug-area">
           <Debug condition={condition} />
-        </div>
+        </div> */}
       </main>
     </div>
   )

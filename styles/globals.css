@@ -23,7 +23,7 @@ a {
 }
 
 .row, .row-header {
-  display: table-row;
+  /* display: table-row; */
 }
 
 .col {
@@ -31,6 +31,14 @@ a {
   padding: 0.5rem 1rem;
   border-right: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
+}
+
+.col.max1{
+  width: 442px;
+}
+
+.col.max2{
+  width: 232px;
 }
 
 .row-header .col {
@@ -43,4 +51,8 @@ a {
   border: 1px solid gray;
   margin-left: -1px;
   padding: 0.5rem 1rem;
+}
+
+#input-destination{
+  width: 368px;
 }
